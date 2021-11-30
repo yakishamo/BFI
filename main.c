@@ -14,6 +14,7 @@ int main(int argc, char *argv[]){
 	int pc = 0;
 	int ptr = 0;
 	int i;
+	char c;
 	char mem[1024];
 	for(i = 0; i < 1024; i++){
 		mem[i] = 0;
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]){
 			printf("%c",mem[ptr]);
 			break;
 		case ',':
-			mem[ptr] = getchar();
+			while((c = getchar()) != '\n') mem[ptr] = c;
 			break;
 		case '[':
 			if(mem[ptr] == 0){
@@ -58,11 +59,10 @@ int main(int argc, char *argv[]){
 			return -1;
 		}
 		pc++;
-		for(i = 0; i < 10; i++){
+		/*for(i = 0; i < 10; i++){
 			printf("%d ", mem[i]);
 		}
-		printf("\n");
-		while(getchar() != '\n'){}
+		printf("\n");*/
 	}
 	printf("\n");
 	return 0;

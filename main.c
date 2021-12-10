@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
+
 int main(int argc, char *argv[]){
-	char cmd[1024];
+	char cmd[30000];
 
 	if(argc != 1) {
 		strcpy(cmd, argv[1]);
@@ -14,9 +15,10 @@ int main(int argc, char *argv[]){
 	int pc = 0;
 	int ptr = 0;
 	int i;
+	int rc = 0;
 	char c;
-	char mem[1024];
-	for(i = 0; i < 1024; i++){
+	char mem[30000];
+	for(i = 0; i < 30000; i++){
 		mem[i] = 0;
 	}
 	while(getchar() != '\n'){}
@@ -42,27 +44,26 @@ int main(int argc, char *argv[]){
 			break;
 		case '[':
 			if(mem[ptr] == 0){
-				while(cmd[pc] != ']'){
+				rc = 0;
+				while(!(cmd[pc] == ']' && rc == 0)){
+					if(cmd[pc] == ']') rc--;
 					pc++;
+					if(cmd[pc] == '[') rc++;
 				}
 			}
 			break;
 		case ']':
 			if(mem[ptr] != 0){
-				while(cmd[pc] != '['){
+				rc = 0;
+				while(!(cmd[pc] == '[' && rc == 0)){
+					if(cmd[pc] == '[') rc--;
 					pc--;
+					if(cmd[pc] == ']') rc++;
 				}
 			}
 			break;
-		default:
-			printf("Unknown Command(%d)\n", pc+1);
-			return -1;
 		}
 		pc++;
-		/*for(i = 0; i < 10; i++){
-			printf("%d ", mem[i]);
-		}
-		printf("\n");*/
 	}
 	printf("\n");
 	return 0;

@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 		exit(1);
 	}
 
-	fprintf(stderr, "cmd : %s\n", cmd);
+	//fprintf(stderr, "cmd : %s\n", cmd);
 	int pc = 0;
 	int ptr = 0;
 	int i;

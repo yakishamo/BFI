@@ -1,17 +1,57 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+#define ALLOC_SIZE (256)
+
+char cmd[30000];
+
+void read_file(FILE *fp){
+	char ch;
+	int i = 0;
+
+	while((ch = fgetc(fp)) != EOF){
+		if(ch == '\n') continue;
+		cmd[i] = ch;
+		i++;
+		if(i == 29999){
+			fprintf(stderr, "File is too big.\n");
+			exit(1);
+		}
+	}
+	cmd[i] = '\0';
+}
+
 
 
 int main(int argc, char *argv[]){
-	char cmd[30000];
 
-	if(argc != 1) {
+	FILE *fp;
+	if(argc == 2) {
 		strcpy(cmd, argv[1]);
-	}else{
-		printf("input:: ");
-		scanf("%s", cmd);
+		//fprintf(stderr, "strlen:%d\n", strlen(cmd));
+		//fprintf(stderr, "cmd[strlen(cmd)] = %d\n", cmd[strlen(cmd)]);
+	} else if(argc == 3) {
+		if(strcmp(argv[1], "-f") == 0){
+		if((fp = fopen(argv[2], "r")) == NULL){
+			fprintf(stderr, "File open error.\n");
+			exit(1);
+			}
+		read_file(fp);
+		fclose(fp);
+		} else {
+			fprintf(stderr, "Too many options.(%d)\n", argc);
+			exit(1);
+		}
+	} else if(argc == 1) {
+			printf("input:: ");
+			scanf("%s", cmd);
+	} else {
+		fprintf(stderr, "Too many options.(%d)\n", argc);
+		exit(1);
 	}
-	
+
+	fprintf(stderr, "cmd : %s\n", cmd);
 	int pc = 0;
 	int ptr = 0;
 	int i;
@@ -21,7 +61,7 @@ int main(int argc, char *argv[]){
 	for(i = 0; i < 30000; i++){
 		mem[i] = 0;
 	}
-	while(getchar() != '\n'){}
+	//while(getchar() != '\n'){}
 	while(cmd[pc] != '\0'){
 		switch(cmd[pc]){
 		case '>':
@@ -61,6 +101,8 @@ int main(int argc, char *argv[]){
 					if(cmd[pc] == ']') rc++;
 				}
 			}
+			break;
+		default:
 			break;
 		}
 		pc++;

@@ -2,8 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define ALLOC_SIZE (256)
-
 char cmd[30000];
 
 void read_file(FILE *fp){

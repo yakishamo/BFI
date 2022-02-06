@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define PRINT_LEN (10)
+
 char cmd[30000];
 
 void read_file(FILE *fp){
@@ -52,7 +54,7 @@ int main(int argc, char *argv[]){
 	//fprintf(stderr, "cmd : %s\n", cmd);
 	int pc = 0;
 	int ptr = 0;
-	int i;
+	int i, j;
 	int rc = 0;
 	char c;
 	char mem[30000];
@@ -61,6 +63,12 @@ int main(int argc, char *argv[]){
 	}
 	//while(getchar() != '\n'){}
 	while(cmd[pc] != '\0'){
+/*
+ * 		for(i = 0; i<PRINT_LEN; i++){
+ *			printf("%3d ", mem[i]);
+ *		}
+ */
+//		printf("\n");
 		switch(cmd[pc]){
 		case '>':
 			ptr++;

@@ -3,20 +3,29 @@
 #include <stdlib.h>
 
 #define PRINT_LEN (10)
+#define REALLOC_SIZE (1000)
 
-char cmd[30000];
+char *cmd;
+int cmd_len = REALLOC_SIZE;
+
+void *my_realloc(void* ptr, int size){
+	ptr = realloc(ptr, size);
+	if(ptr == NULL) {
+		fprintf(stderr, "realloc error.\n");
+		exit(1);
+	}
+}
 
 void read_file(FILE *fp){
 	char ch;
 	int i = 0;
 
 	while((ch = fgetc(fp)) != EOF){
-		if(ch == '\n') continue;
 		cmd[i] = ch;
 		i++;
-		if(i == 29999){
-			fprintf(stderr, "File is too big.\n");
-			exit(1);
+		if((i%REALLOC_SIZE) == 0){
+			my_realloc(cmd, cmd_len + sizeof(char) * REALLOC_SIZE);
+			cmd_len += REALLOC_SIZE;
 		}
 	}
 	cmd[i] = '\0';
@@ -27,6 +36,11 @@ void read_file(FILE *fp){
 int main(int argc, char *argv[]){
 
 	FILE *fp;
+	if((cmd = malloc(sizeof(char)*REALLOC_SIZE)) == NULL){
+		fprintf(stderr, "malloc error.\n");
+		exit(1);
+	}
+
 	if(argc == 2) {
 		strcpy(cmd, argv[1]);
 		//fprintf(stderr, "strlen:%d\n", strlen(cmd));

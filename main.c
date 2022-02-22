@@ -6,7 +6,8 @@
 #define REALLOC_SIZE (1000)
 
 char *cmd;
-int cmd_len = REALLOC_SIZE;
+int cmdarr_len = REALLOC_SIZE;
+int cmd_len = 0;
 
 void *my_realloc(void* ptr, int size){
 	ptr = realloc(ptr, size);
@@ -22,10 +23,11 @@ void read_file(FILE *fp){
 
 	while((ch = fgetc(fp)) != EOF){
 		cmd[i] = ch;
+		cmd_len++;
 		i++;
 		if((i%REALLOC_SIZE) == 0){
-			my_realloc(cmd, cmd_len + sizeof(char) * REALLOC_SIZE);
-			cmd_len += REALLOC_SIZE;
+			my_realloc(cmd, cmdarr_len + sizeof(char) * REALLOC_SIZE);
+			cmdarr_len += REALLOC_SIZE;
 		}
 	}
 	cmd[i] = '\0';
@@ -43,16 +45,15 @@ int main(int argc, char *argv[]){
 
 	if(argc == 2) {
 		strcpy(cmd, argv[1]);
-		//fprintf(stderr, "strlen:%d\n", strlen(cmd));
-		//fprintf(stderr, "cmd[strlen(cmd)] = %d\n", cmd[strlen(cmd)]);
+		cmd_len = strlen(cmd);
 	} else if(argc == 3) {
 		if(strcmp(argv[1], "-f") == 0){
-		if((fp = fopen(argv[2], "r")) == NULL){
-			fprintf(stderr, "File open error.\n");
-			exit(1);
+			if((fp = fopen(argv[2], "r")) == NULL){
+				fprintf(stderr, "File open error.\n");
+				exit(1);
 			}
-		read_file(fp);
-		fclose(fp);
+			read_file(fp);
+			fclose(fp);
 		} else {
 			fprintf(stderr, "Too many options.(%d)\n", argc);
 			exit(1);
@@ -60,6 +61,7 @@ int main(int argc, char *argv[]){
 	} else if(argc == 1) {
 			printf("input:: ");
 			scanf("%s", cmd);
+			cmd_len = strlen(cmd);
 	} else {
 		fprintf(stderr, "Too many options.(%d)\n", argc);
 		exit(1);
@@ -106,6 +108,10 @@ int main(int argc, char *argv[]){
 			if(mem[ptr] == 0){
 				rc = 0;
 				while(!(cmd[pc] == ']' && rc == 0)){
+					if(pc == cmd_len){
+						fprintf(stderr, "'[' is too many.\n");
+						exit(1);
+					}
 					if(cmd[pc] == ']') rc--;
 					pc++;
 					if(cmd[pc] == '[') rc++;
@@ -116,6 +122,10 @@ int main(int argc, char *argv[]){
 			if(mem[ptr] != 0){
 				rc = 0;
 				while(!(cmd[pc] == '[' && rc == 0)){
+					if(pc == 0){
+						fprintf(stderr, "']' is too many.\n");
+						exit(1);
+					}
 					if(cmd[pc] == '[') rc--;
 					pc--;
 					if(cmd[pc] == ']') rc++;

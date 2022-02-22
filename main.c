@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define PRINT_LEN (10)
-#define REALLOC_SIZE (1000)
+#define REALLOC_SIZE (10)
 
 char *cmd;
 int cmdarr_len = REALLOC_SIZE;

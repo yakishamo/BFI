@@ -2,20 +2,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define PRINT_LEN (10)
-#define REALLOC_SIZE (10)
+#define REALLOC_SIZE (3000)
 
-char *cmd;
+char *cmd = NULL;
 int cmdarr_len = REALLOC_SIZE;
 int cmd_len = 0;
-
-void *my_realloc(void* ptr, int size){
-	ptr = realloc(ptr, size);
-	if(ptr == NULL) {
-		fprintf(stderr, "realloc error.\n");
-		exit(1);
-	}
-}
 
 void read_file(FILE *fp){
 	char ch;
@@ -23,17 +14,19 @@ void read_file(FILE *fp){
 
 	while((ch = fgetc(fp)) != EOF){
 		cmd[i] = ch;
-		cmd_len++;
 		i++;
-		if((i%REALLOC_SIZE) == 0){
-			my_realloc(cmd, cmdarr_len + sizeof(char) * REALLOC_SIZE);
+		if(((i+1)%REALLOC_SIZE) == 0){
+			if((cmd = realloc(cmd, cmdarr_len + sizeof(char) * REALLOC_SIZE)) 
+					== NULL){
+				fprintf(stderr, "realloc error.\n");
+			}else{
+				//nothing to do//
+			}
 			cmdarr_len += REALLOC_SIZE;
 		}
 	}
 	cmd[i] = '\0';
 }
-
-
 
 int main(int argc, char *argv[]){
 
@@ -41,11 +34,16 @@ int main(int argc, char *argv[]){
 	if((cmd = malloc(sizeof(char)*REALLOC_SIZE)) == NULL){
 		fprintf(stderr, "malloc error.\n");
 		exit(1);
+	}else{
+		//nothing to do.
 	}
-
 	if(argc == 2) {
 		strcpy(cmd, argv[1]);
 		cmd_len = strlen(cmd);
+		if(cmd_len > REALLOC_SIZE){
+			fprintf(stderr, "Too long code.\n");
+			exit(1);
+		}
 	} else if(argc == 3) {
 		if(strcmp(argv[1], "-f") == 0){
 			if((fp = fopen(argv[2], "r")) == NULL){
@@ -59,15 +57,14 @@ int main(int argc, char *argv[]){
 			exit(1);
 		}
 	} else if(argc == 1) {
-			printf("input:: ");
-			scanf("%s", cmd);
-			cmd_len = strlen(cmd);
+			fprintf(stderr, "Too few options.");
 	} else {
 		fprintf(stderr, "Too many options.(%d)\n", argc);
 		exit(1);
 	}
 
-	//fprintf(stderr, "cmd : %s\n", cmd);
+	//fprintf(stderr, "%s\n", cmd);
+
 	int pc = 0;
 	int ptr = 0;
 	int i, j;
@@ -77,14 +74,8 @@ int main(int argc, char *argv[]){
 	for(i = 0; i < 30000; i++){
 		mem[i] = 0;
 	}
-	//while(getchar() != '\n'){}
+
 	while(cmd[pc] != '\0'){
-/*
- * 		for(i = 0; i<PRINT_LEN; i++){
- *			printf("%3d ", mem[i]);
- *		}
- */
-//		printf("\n");
 		switch(cmd[pc]){
 		case '>':
 			ptr++;
@@ -138,5 +129,6 @@ int main(int argc, char *argv[]){
 		pc++;
 	}
 	printf("\n");
+	free(cmd);
 	return 0;
 }

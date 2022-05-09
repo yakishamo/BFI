@@ -1,4 +1,4 @@
-Brain Fuck Interpreter\n
-./BFI -f [any brainfuck file]
-or
-./BFI [any row brainfuck]
+Brain Fuck Interpreter  
+./BFI -f [any brainfuck file]  
+or  
+./BFI [any row brainfuck]  
